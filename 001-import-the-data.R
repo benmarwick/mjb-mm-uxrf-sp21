@@ -1,6 +1,6 @@
 
 
-library(tidyverse)
+library(tidyverse) # you may need to install.packages("tidyverse") in the console
 library(readxl)
 library(vegetarian) # https://github.com/cran/vegetarian, not on CRAN
 # to install remotes::install_github("cran/vegetarian")
@@ -8,7 +8,8 @@ library(easyCODA)
 library(googlesheets4)
 
 # change to your own UW email
-gs4_auth("bmarwick@uw.edu")
+gs4_auth("bmarwick@uw.edu") # opens a browser window, you need to check the box and 
+# click "ok" and wait for the message that says 'close this window'
 
 # Get our google sheet of information about the location of each point
 block_sample_point_details <- 
@@ -26,7 +27,7 @@ block_sample_locations <-
 
 # to get or update the data files:
 # 1. Go to https://drive.google.com/drive/u/1/folders/1KaYNY0ybUQbUAwgcCd1G-A9FXe4-uiA6
-# 2. Download to your computer this folder: Data files from XRF instrument
+# 2. Download to your computer this folder: "Data files from XRF instrument"
 # 3. Unzip and place the unzipped folder in a folder named 'data' 
 # in the same directory as this file
 
@@ -41,7 +42,7 @@ all_files <- list.files(path = here::here("data"),
 names(all_files) <- tolower(str_remove(basename(all_files), ".xls"))
 
 # how many do we have?
-length(all_files) # 237
+length(all_files) # 237 -> 254
 
 # standardise the sample names 
 names(all_files) <- 
@@ -121,7 +122,7 @@ names(all_files_xls_format_ok_wt) %>%
   str_remove(., "-rt|-table|-pt.*") %>% 
   unique() %>% 
   enframe() %>% 
-  arrange(value) # 17 rows
+  arrange(value) # 17 rows -> 35 rows
 
 # convert from list of tables into one data frame
 all_files_wt_df <- 
@@ -160,7 +161,7 @@ idx <- str_detect(all_files_wt_df$sample,
 all_files_wt_df_matrix %>% 
   mutate(sample = str_remove(sample, "-rt|-table|-pt.*")) %>% 
   group_by(sample) %>% 
-  tally() # 16
+  tally() # 16 -> 11
 
 # our set of elements
 
@@ -220,8 +221,12 @@ all_files_wt_df_matrix_wide <-
   select(our_elements)
 
 # normalise the measurements so all elements sum to 100 in each sample
-all_files_wt_df_matrix_wide_norm <- data.frame(normalize.rows(all_files_wt_df_matrix_wide) * 100)
-names(all_files_wt_df_matrix_wide_norm) <- names(all_files_wt_df_matrix_wide)
+all_files_wt_df_matrix_wide_norm <- 
+  data.frame(normalize.rows(all_files_wt_df_matrix_wide) * 100)
+
+names(all_files_wt_df_matrix_wide_norm) <- 
+  names(all_files_wt_df_matrix_wide)
+
 rownames(all_files_wt_df_matrix_wide_norm) <- 
   str_remove(unique(all_files_wt_df_matrix$sample), "mjb15-")
 
