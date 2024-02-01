@@ -37,15 +37,11 @@ all_files <- list.files(path = here::here("data"),
 names(all_files) <- tolower(str_remove(basename(all_files), ".xls"))
 
 # how many do we have?
-<<<<<<< HEAD
-length(all_files) # 237 -> 254
-=======
 length(all_files) # 250
 
 # most have the individual points labelled like
 # pt-000 or pt00 or p000
 # so we can take the filename and paste the point number on
->>>>>>> 02ffe3d42567ea9ea7ae5cf559fd4785f49b6716
 
 # standardise the sample names 
 names(all_files) <- 
@@ -130,11 +126,8 @@ names(all_files_xls_format_ok_wt) %>%
   str_remove(., "-rt|-table|-pt.*") %>% 
   unique() %>% 
   enframe() %>% 
-<<<<<<< HEAD
   arrange(value) # 17 rows -> 35 rows
-=======
-  arrange(value) # 47 rows
->>>>>>> 02ffe3d42567ea9ea7ae5cf559fd4785f49b6716
+
 
 # convert from list of tables into one data frame
 all_files_wt_df <- 
