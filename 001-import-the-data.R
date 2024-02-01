@@ -16,11 +16,6 @@ block_sample_point_details <-
   read_sheet("https://docs.google.com/spreadsheets/d/1nbMGQI0_8iOh6vr6sQhBWCsX78NupUqxGeVyhCsFdas/",
              sheet = "block sample points") 
 
-# exclude first set of MM2 by Isa because they are too clustered
-block_sample_point_details <- 
-block_sample_point_details %>% 
-  filter((Note != "Isa") %>% replace_na(TRUE))
-
 block_sample_locations <- 
   read_sheet("https://docs.google.com/spreadsheets/d/1nbMGQI0_8iOh6vr6sQhBWCsX78NupUqxGeVyhCsFdas/",
              sheet = "block sample locations in excavation")
@@ -42,56 +37,69 @@ all_files <- list.files(path = here::here("data"),
 names(all_files) <- tolower(str_remove(basename(all_files), ".xls"))
 
 # how many do we have?
+<<<<<<< HEAD
 length(all_files) # 237 -> 254
+=======
+length(all_files) # 250
+
+# most have the individual points labelled like
+# pt-000 or pt00 or p000
+# so we can take the filename and paste the point number on
+>>>>>>> 02ffe3d42567ea9ea7ae5cf559fd4785f49b6716
 
 # standardise the sample names 
 names(all_files) <- 
   names(all_files) %>% 
   str_replace_all(" |_", "-") %>% 
-  str_replace_all("-1-pt0", "-1-pt-00") %>% 
-  str_replace_all("pt0", "pt-0") %>% 
-  str_replace_all("pt1", "pt-01") %>% 
-  str_replace_all("pt01-", "pt-001") %>% 
-  str_replace_all("pt02-", "pt-002") %>% 
-  str_replace_all("pt03-", "pt-003") %>% 
-  str_replace_all("pt04-", "pt-004") %>% 
-  str_replace_all("pt05-", "pt-005") %>% 
-  str_replace_all("pt06-", "pt-006") %>% 
-  str_replace_all("pt07-", "pt-007") %>% 
-  str_replace_all("pt08-", "pt-008") %>% 
-  str_replace_all("pt09-", "pt-009") %>% 
-  str_replace_all("pt-01-", "pt-001-") %>% 
-  str_replace_all("pt-02-", "pt-002-") %>% 
-  str_replace_all("pt-03-", "pt-003-") %>% 
-  str_replace_all("pt-04-", "pt-004-") %>% 
-  str_replace_all("pt-05-", "pt-005-") %>% 
-  str_replace_all("pt-06-", "pt-006-") %>% 
-  str_replace_all("pt-07-", "pt-007-") %>% 
-  str_replace_all("pt-08-", "pt-008-") %>% 
-  str_replace_all("pt-09-", "pt-009-") %>% 
-  str_replace_all("tm-1-", "tm1-") %>% 
-  str_replace_all("tm-3-", "tm3-") %>% 
-  str_replace_all("mm-1-", "mm1-") %>%
-  str_replace_all("mm-2-", "mm2-") %>% 
-  str_replace_all("mm-3-", "mm3-") %>% 
-  str_replace_all("mm-4-", "mm4-") %>% 
-  str_replace_all("mm-6-", "mm6-") %>% 
-  str_replace_all("mm-7-", "mm7-") %>% 
-  str_replace_all("mm-8-", "mm8-") %>% 
-  str_replace_all("mjb-15-", "mjb15-") %>% 
-  ifelse(startsWith(., "mjb15-"), ., str_c("mjb15-", .) )
+  str_replace_all("pt1",     "pt-001-") %>% 
+  str_replace_all("pt01-",   "pt-001-") %>% 
+  str_replace_all("pt02-",   "pt-002-") %>% 
+  str_replace_all("pt03-",   "pt-003-") %>% 
+  str_replace_all("pt04-",   "pt-004-") %>% 
+  str_replace_all("pt05-",   "pt-005-") %>% 
+  str_replace_all("pt06-",   "pt-006-") %>% 
+  str_replace_all("pt07-",   "pt-007-") %>% 
+  str_replace_all("pt08-",   "pt-008-") %>% 
+  str_replace_all("pt09-",   "pt-009-") %>% 
+  str_replace_all("pt10-",   "pt-010-") %>% 
+  str_replace_all("pt11-",   "pt-011-") %>% 
+  str_replace_all("pt12-",   "pt-012-") %>% 
+  str_replace_all("pt-01-",  "pt-001-") %>% 
+  str_replace_all("pt-02-",  "pt-002-") %>% 
+  str_replace_all("pt-03-",  "pt-003-") %>% 
+  str_replace_all("pt-04-",  "pt-004-") %>% 
+  str_replace_all("pt-05-",  "pt-005-") %>% 
+  str_replace_all("pt-06-",  "pt-006-") %>% 
+  str_replace_all("pt-07-",  "pt-007-") %>% 
+  str_replace_all("pt-08-",  "pt-008-") %>% 
+  str_replace_all("pt-09-",  "pt-009-") %>% 
+  str_replace_all("p001-",  "pt-001-") %>% 
+  str_replace_all("p002-",  "pt-002-") %>% 
+  str_replace_all("p003-",  "pt-003-") %>% 
+  str_replace_all("p004-",  "pt-004-") %>% 
+  str_replace_all("p005-",  "pt-005-") %>% 
+  str_replace_all("p006-",  "pt-006-") %>% 
+  str_replace_all("p007-",  "pt-007-") %>% 
+  str_replace_all("p008-",  "pt-008-") %>% 
+  str_replace_all("p009-",  "pt-009-") %>% 
+  str_replace_all("p010-",  "pt-010-") %>% 
+  str_replace_all("p011-",  "pt-011-") %>% 
+  str_replace_all("p012-",  "pt-012-")
 
-# file names from the instrument in names(all_files) 
-#  "mjb15-mm-8a-5wt-001-pt-001"
-#  "mjb15-mm-9a-5wt-002-pt-001"
-#  "mjb15-mm-10a-5wt-003-pt-001"
+# this gets the nice block IDs
+block_ids <- map_chr(all_files, ~strsplit(.x, '/')[[1]][8])
+# this get the analysis point numbers
+pt_nums <- str_extract(all_files, "pt-[[0-9]]{3}")
+# this puts them together
+checking <- tibble(block_ids, 
+                   pt_nums) %>% 
+  mutate(new_file_name = paste0(block_ids, "-", pt_nums, ".xlsx"))
+  
+dir.create("data/renamed-files/")
+file.rename(all_files, 
+            paste0("data/renamed-files/", checking$new_file_name))
 
-names(all_files) <- 
-  names(all_files) %>% 
-  str_replace_all("mm-8a-", "mm9-") %>% 
-  str_replace_all("mm-9a-", "mm10-") %>% 
-  str_replace_all("mm-10a-", "mm11-") %>% 
-  str_replace_all("5wt-\\d{3}-", "") 
+# up to here
 
 all_files_xls <- 
   map(all_files, ~read_excel(.x, skip = 7)) 
@@ -122,7 +130,11 @@ names(all_files_xls_format_ok_wt) %>%
   str_remove(., "-rt|-table|-pt.*") %>% 
   unique() %>% 
   enframe() %>% 
+<<<<<<< HEAD
   arrange(value) # 17 rows -> 35 rows
+=======
+  arrange(value) # 47 rows
+>>>>>>> 02ffe3d42567ea9ea7ae5cf559fd4785f49b6716
 
 # convert from list of tables into one data frame
 all_files_wt_df <- 
