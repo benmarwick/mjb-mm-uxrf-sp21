@@ -36,7 +36,7 @@ all_files <- list.files(path = here::here("data"),
 names(all_files) <- tolower(str_remove(basename(all_files), ".xls"))
 
 # how many do we have?
-length(all_files) # 250
+length(all_files) # 346
 
 # most have the individual points labelled like
 # pt-000 or pt00 or p000
@@ -88,31 +88,47 @@ pt_nums <- str_extract(all_files, "pt-[[0-9]]{3}")
 # this puts them together
 checking <- tibble(block_ids, 
                    pt_nums) %>% 
-  mutate(new_file_name = paste0(block_ids, "-", pt_nums, ".xlsx"))
+  mutate(new_file_name = paste0(block_ids, "-", pt_nums, ".xls"))
   
 dir.create("data/renamed-files/")
 file.rename(all_files, 
             paste0("data/renamed-files/", checking$new_file_name))
 
+# delete everything in the "Data files from XRF instrument"
+# folder to avoid confusion
+unlink("data/Data files from XRF instrument",
+       recursive = TRUE)
+
 # up to here
 
+all_files_rennamed <- 
+list.files("data/renamed-files/",
+           full.names = TRUE)
+
 all_files_xls <- 
-  map(all_files, ~read_excel(.x, skip = 7)) 
+  map(all_files_rennamed, ~read_excel(.x, skip = 7)) 
 # View(all_files_xls)
 
-all_files_xls_tbl <- 
-  tibble(clean_names = names(all_files),
-         actual_names = all_files)
+names(all_files_xls) <- tolower(str_remove(basename(all_files_rennamed), ".xls"))
 
-# drop empty or malformed data tables, check for presence of 'series' column
+# drop empty or malformed data tables, 
+# check for presence of 'series' column
+# this indicates that summary table that 
+# we want. Some files have counts, this
+# is too raw for us. 
 
 # identify bad tables
 all_files_xls_format_ok_idx <- 
-  map_lgl(all_files_xls, ~ifelse("series" %in% names(.x), TRUE, FALSE))
+  map_lgl(all_files_xls, 
+          ~ifelse("series" %in% names(.x), TRUE, FALSE))
 
-# drop bad tables
+# drop data frames that are not the summary tables
+# that we want
 all_files_xls_format_ok <- 
   all_files_xls[all_files_xls_format_ok_idx]
+
+# how many points does this leave us?
+length(all_files_xls_format_ok) # 127
 
 # select only the element and wt cols
 all_files_xls_format_ok_wt <- 
@@ -120,12 +136,13 @@ all_files_xls_format_ok_wt <-
         filter(!str_detect(series, "Sum")) %>% 
         select(Element, `[wt.%]` )) 
 
-# check to see what we have, how many & which blocks do we have data from?
+# check to see what we have, how many & 
+# which blocks do we have data from?
 names(all_files_xls_format_ok_wt) %>% 
-  str_remove(., "-rt|-table|-pt.*") %>% 
+  str_remove_all(., "-rt|-table|-p.{3,5}") %>% 
   unique() %>% 
   enframe() %>% 
-  arrange(value) # 47 rows
+  arrange(value) # 18 rows
 
 # convert from list of tables into one data frame
 all_files_wt_df <- 
@@ -136,12 +153,10 @@ all_files_wt_df <-
 block_sample_point_details_matrix <- 
   block_sample_point_details %>% 
   filter(Comment == "matrix") %>% 
-  mutate(Block = tolower(Block),
+  mutate(Block = tolower(Block2),
          Point = sprintf("%03d", Point)) %>% 
-  mutate(sample_id = str_c(Block, "-pt-", Point)) %>% 
-  mutate(sample_id = str_replace(sample_id, "mm-", "mm")) %>% 
-  mutate(sample_id = str_replace(sample_id, "mjb-15", "mjb15")) %>% 
-  mutate(sample_id = str_replace_all(sample_id, "5wt-\\d{3}-", "")) 
+  mutate(sample_id = tolower(str_c(Block2, "-pt-", Point))) %>% 
+  drop_na(sample_id)
 
 
 # Matrix points ------------------------------------------------------
@@ -164,7 +179,7 @@ idx <- str_detect(all_files_wt_df$sample,
 all_files_wt_df_matrix %>% 
   mutate(sample = str_remove(sample, "-rt|-table|-pt.*")) %>% 
   group_by(sample) %>% 
-  tally() # 16 -> 11
+  tally() # 16 -> 11 -> 9
 
 # our set of elements
 
