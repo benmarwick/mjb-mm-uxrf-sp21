@@ -401,6 +401,30 @@ ggplot(all_files_wt_df_tm_1_5) +
 # what if we select only the elements in common, then normalise? # Will the 
 # two samples appear the same?
 
+#------------------------------------------------
+
+# Here are the data all_files_wt_df_matrix_wide_norm
+# how to find out what elements best separate mm from tm?
+library(corrplot)
+corr.matrix <- cor(all_files_wt_df_matrix_wide_norm)
+corrplot.mixed(corr.matrix)
+
+# The coefficients of linear discriminants are the weights 
+# of the linear combination of the input variables that best
+# separates the groups.
+
+all_files_wt_df_matrix_wide_norm_group <- 
+all_files_wt_df_matrix_wide_norm %>% 
+  mutate(group = row.names(.)) %>% 
+  mutate(group = str_extract(group, "mm|tm")) 
+
+
+lda_res <- 
+lda(group ~ . ,
+    data = all_files_wt_df_matrix_wide_norm_group)
+
+
+
 
 
 
