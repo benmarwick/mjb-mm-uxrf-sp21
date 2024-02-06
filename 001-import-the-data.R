@@ -85,7 +85,8 @@ names(all_files) <-
 # this gets the nice block IDs
 block_ids <- map_chr(all_files, ~strsplit(.x, '/')[[1]][8])
 # this get the analysis point numbers
-pt_nums <- str_extract(all_files, "pt-[[0-9]]{3}")
+pt_nums <- str_extract(names(all_files), "pt-[[0-9]]{3}")
+
 # this puts them together
 checking <- tibble(block_ids, 
                    pt_nums) %>% 
@@ -102,13 +103,32 @@ all_renamed_files <-
   list.files("data/renamed-files/",
              full.names = TRUE)
 
-# up to here
+# delete everything in the "Data files from XRF instrument"
+# folder to avoid confusion
+unlink("data/Data files from XRF instrument",
+       recursive = TRUE)
+
+all_files_rennamed <- 
+list.files("data/renamed-files/",
+           full.names = TRUE)
 
 all_files_xls <- 
+<<<<<<< HEAD
   map(all_renamed_files, ~read_excel(.x, skip = 7)) 
 # View(all_files_xls)
 
 # drop empty or malformed data tables, check for presence of 'series' column
+=======
+  map(all_files_rennamed, ~read_excel(.x, skip = 7)) 
+
+names(all_files_xls) <- tolower(str_remove(basename(all_files_rennamed), ".xls"))
+
+# drop empty or malformed data tables, 
+# check for presence of 'series' column
+# this indicates that summary table that 
+# we want. Some files have counts, this
+# is too raw for us. 
+>>>>>>> ab381787716256e01f19d253a9b74b847e573751
 
 names(all_files_xls)
 
@@ -116,14 +136,23 @@ names(all_files_xls)
 # called "series" we want that. 
 # (don't want the spectra files, which lack the 'series' column)
 all_files_xls_format_ok_idx <- 
-  map_lgl(all_files_xls, ~ifelse("series" %in% names(.x), TRUE, FALSE))
+  map_lgl(all_files_xls, 
+          ~ifelse("series" %in% names(.x), TRUE, FALSE))
 
+<<<<<<< HEAD
 # what are those samples that lack the table of data
 all_renamed_files[!all_files_xls_format_ok_idx]
 
 # drop bad tables
+=======
+# drop data frames that are not the summary tables
+# that we want
+>>>>>>> ab381787716256e01f19d253a9b74b847e573751
 all_files_xls_format_ok <- 
   all_files_xls[all_files_xls_format_ok_idx]
+
+# how many points does this leave us?
+length(all_files_xls_format_ok) # 201
 
 # select only the element and wt cols
 all_files_xls_format_ok_wt <- 
@@ -131,13 +160,18 @@ all_files_xls_format_ok_wt <-
         filter(!str_detect(series, "Sum")) %>% 
         select(Element, `[wt.%]` )) 
 
-# check to see what we have, how many & which blocks do we have data from?
+# check to see what we have, how many & 
+# which blocks do we have data from?
 names(all_files_xls_format_ok_wt) %>% 
-  str_remove(., "-rt|-table|-pt.*") %>% 
+  str_remove_all(., "-rt|-table|-p.{3,5}") %>% 
   unique() %>% 
   enframe() %>% 
+<<<<<<< HEAD
   arrange(value) # 17 rows -> 35 rows
 
+=======
+  arrange(value) # 19 rows
+>>>>>>> ab381787716256e01f19d253a9b74b847e573751
 
 # convert from list of tables into one data frame
 all_files_wt_df <- 
@@ -148,12 +182,10 @@ all_files_wt_df <-
 block_sample_point_details_matrix <- 
   block_sample_point_details %>% 
   filter(Comment == "matrix") %>% 
-  mutate(Block = tolower(Block),
+  mutate(Block = tolower(Block2),
          Point = sprintf("%03d", Point)) %>% 
-  mutate(sample_id = str_c(Block, "-pt-", Point)) %>% 
-  mutate(sample_id = str_replace(sample_id, "mm-", "mm")) %>% 
-  mutate(sample_id = str_replace(sample_id, "mjb-15", "mjb15")) %>% 
-  mutate(sample_id = str_replace_all(sample_id, "5wt-\\d{3}-", "")) 
+  mutate(sample_id = tolower(str_c(Block2, "-pt-", Point))) %>% 
+  drop_na(sample_id)
 
 
 # Matrix points ------------------------------------------------------
@@ -173,57 +205,54 @@ idx <- str_detect(all_files_wt_df$sample,
 # all_files_wt_df[idx,]
 
 # check to see what we have
+all_files_wt_df_matrix_blocks <- 
 all_files_wt_df_matrix %>% 
-  mutate(sample = str_remove(sample, "-rt|-table|-pt.*")) %>% 
+  mutate(sample = str_remove(sample, "-pt.*")) %>% 
   group_by(sample) %>% 
-  tally() # 16 -> 11
+  tally() # 16 -> 11 -> 9 -> 12
+
+all_files_wt_df_matrix_blocks
 
 # our set of elements
 
 our_elements <- c(
   # our set of elements, many are highly correlated, so
   # we comment-out elements to exclude them from the LRA
-  # "Aluminium"  ,  
-  # Arsenic  ,  
-  # Barium   , 
-  # Bismuth  ,  
-  # Bromine  ,  
+  #"Aluminium"  ,  
+  "Arsenic"  ,  
+  "Barium"   , 
+  "Bromine"  ,  
   "Calcium"  , 
-  # Chromium,  
-  # Cobalt    , 
+  "Chromium",  
+  "Cobalt"    , 
   "Copper"    , 
-  # Gallium   , 
-  # Germanium , 
-  # Gold      , 
-  # Iridium   , 
+  "Gallium"   , 
+  "Germanium" , 
+  "Iridium"   , 
   "Iron",      
   "Magnesium",  
-  # "Manganese" , 
-  # Mercury   , 
+  "Manganese" , 
   "Nickel"    , 
-  # Osmium    , 
-  # Palladium , 
-  # "Phosphorus",
-  # Platinum ,  
+  "Palladium" , 
+  #"Phosphorus",
+  "Platinum" ,  
   "Potassium" , 
-  # Rhenium   , 
-  # Rhodium   , 
-  # Rubidium  , 
-  # Ruthenium , 
-  # Scandium,  
+  "Rhodium"   , 
+  "Rubidium"  , 
+  "Scandium",  
   "Selenium" , 
   "Silicon"   , 
-  # Silver    , 
-  # "Strontium" , 
-  # Sulfur    ,
-  # Tantalum  , 
+  "Silver"    ,  # very correlated 
+  "Strontium" ,  # very correlated 
+  #"Sulfur"    ,  # very correlated 
   "Tin",       
   "Titanium" ,  
-  # Tungsten  , 
-  # Vanadium  , 
+  "Tungsten"  , 
+  "Vanadium"  , 
   "Yttrium"   , 
   "Zinc"      , 
-  "Zirconium")
+  "Zirconium"
+ )
 
 # select only a sub-set of elements
 all_files_wt_df_matrix_wide <- 
@@ -232,8 +261,8 @@ all_files_wt_df_matrix_wide <-
               values_from = `[wt.%]` ) %>% 
   replace(is.na(.), 0)  %>% 
   replace(. == 0, 0.0001) %>% 
-  select(-sample) %>% 
-  select(our_elements)
+  dplyr::select(-sample) %>% 
+  dplyr::select(our_elements)
 
 # normalise the measurements so all elements sum to 100 in each sample
 all_files_wt_df_matrix_wide_norm <- 
@@ -244,4 +273,36 @@ names(all_files_wt_df_matrix_wide_norm) <-
 
 rownames(all_files_wt_df_matrix_wide_norm) <- 
   str_remove(unique(all_files_wt_df_matrix$sample), "mjb15-")
+
+# explore just a few samples
+all_files_wt_df_matrix_wide_norm_subset <- 
+  all_files_wt_df_matrix_wide_norm %>% 
+  filter(
+    str_detect(rownames(.), 
+                    str_c(
+                    c(
+                    # we need to manually add the block ID
+                    # here to make it show up on the plot
+                    "mm-05-9ya-013",
+                    "mm-06-9ya-014",
+                    "mm-07-9ya-015",
+                    "mm-08-5wt-001",
+                    "mm-08-9ya-016",
+                    "mm-09-5wt-002",
+                    "mm-10-5wt-003",
+                    "mm-17-6dg-004",
+                    "mm-22-5wt-006",
+                    "tm-02-00-9ya-001",
+                    "tm-01-01-9ya-003",
+                    "tm-01-05-9ya-007"
+                    ),
+                    collapse = "|"))
+  ) %>% 
+  filter(!rownames(.) %in% c(
+    # filter out highly outlying points
+    "tm-02-00-9ya-001-pt-004-pt-004.xls",
+    "tm-02-00-9ya-001-pt-003-pt-003.xls"
+                              ))
+
+
 

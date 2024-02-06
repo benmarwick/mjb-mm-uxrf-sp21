@@ -46,6 +46,14 @@ function (obj,
     summarise(mean_x = mean(X1),
               mean_y = mean(X2))
   
+  point_labels <- 
+    data.frame(obj.rpc, 
+               label = obj$rownames) %>% 
+    mutate(sample_group = str_remove(label, "-pt.*")) %>% 
+    mutate(label =  str_extract(label, "pt-.{3}")) 
+
+    
+  
   legend_labels <- c("Termite mound", "Archaeological deposit")
   legend_title <- "Legend"
   
@@ -79,14 +87,21 @@ function (obj,
                   X2, 
                   label = label),
               colour = "red",
-              size = 5) + 
+              size = 3) + 
     geom_shadowtext(data = centroid_for_labels,
               aes(mean_x, 
                   mean_y, 
                   label = sample_group),
-              size = 3,
+              size = 2,
               colour = "black",
               bg.colour = "white") +
+    geom_shadowtext(data = point_labels,
+                    aes( X1 , 
+                         X2, 
+                        label = label,
+                        colour = str_detect(obj$rownames, "mm")),
+                    size = 0,
+                    bg.colour = "white") +
     scale_color_manual(values = scales::hue_pal()(2),
                        labels = legend_labels) +
     scale_shape_manual(values = scales:::shape_pal()(2),

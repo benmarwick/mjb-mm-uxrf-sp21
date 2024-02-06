@@ -5,7 +5,7 @@ source(here::here("001-import-the-data.R"))
 # explore LRA for matrix points -----------------------------------------------
 # compute Log Ratio Analysis
 all_files_wt_df_matrix_wide_norm_lra <- 
-  LRA(all_files_wt_df_matrix_wide_norm)
+  LRA(all_files_wt_df_matrix_wide_norm_subset)
 
 # plot matrix points -----------------------------------------------
 # read in the code to make the plot, and visualise the LRA
