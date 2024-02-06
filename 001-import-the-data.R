@@ -37,7 +37,7 @@ all_files <- list.files(path = here::here("data"),
 names(all_files) <- tolower(str_remove(basename(all_files), ".xls"))
 
 # how many do we have?
-length(all_files) # 250
+length(all_files) # 346
 
 # most have the individual points labelled like
 # pt-000 or pt00 or p000
@@ -89,27 +89,37 @@ pt_nums <- str_extract(all_files, "pt-[[0-9]]{3}")
 # this puts them together
 checking <- tibble(block_ids, 
                    pt_nums) %>% 
-  mutate(new_file_name = paste0(block_ids, "-", pt_nums, ".xlsx"))
+  mutate(new_file_name = paste0(block_ids, "-", pt_nums, ".xls"))
   
+# delete this later
 dir.create("data/renamed-files/")
+
 file.rename(all_files, 
-            paste0("data/renamed-files/", checking$new_file_name))
+            paste0("data/renamed-files/", 
+                   checking$new_file_name))
+
+all_renamed_files <- 
+  list.files("data/renamed-files/",
+             full.names = TRUE)
 
 # up to here
 
 all_files_xls <- 
-  map(all_files, ~read_excel(.x, skip = 7)) 
+  map(all_renamed_files, ~read_excel(.x, skip = 7)) 
 # View(all_files_xls)
-
-all_files_xls_tbl <- 
-  tibble(clean_names = names(all_files),
-         actual_names = all_files)
 
 # drop empty or malformed data tables, check for presence of 'series' column
 
-# identify bad tables
+names(all_files_xls)
+
+# identify tables that have the element weights, they have a column
+# called "series" we want that. 
+# (don't want the spectra files, which lack the 'series' column)
 all_files_xls_format_ok_idx <- 
   map_lgl(all_files_xls, ~ifelse("series" %in% names(.x), TRUE, FALSE))
+
+# what are those samples that lack the table of data
+all_renamed_files[!all_files_xls_format_ok_idx]
 
 # drop bad tables
 all_files_xls_format_ok <- 
