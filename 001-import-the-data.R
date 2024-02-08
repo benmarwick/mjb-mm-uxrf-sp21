@@ -287,7 +287,9 @@ all_files_wt_df_matrix_wide_norm_subset <-
   filter(!rownames(.) %in% c(
     # filter out highly outlying points
     "tm-02-00-9ya-001-pt-004-pt-004.xls",
-    "tm-02-00-9ya-001-pt-003-pt-003.xls"
+    "tm-02-00-9ya-001-pt-003-pt-003.xls",
+    "mm-18-6dg-005-pt-001",
+    "mm-18-6dg-005-pt-002"
                               ))
 
 
