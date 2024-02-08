@@ -37,7 +37,7 @@ all_files <- list.files(path = here::here("data"),
 names(all_files) <- tolower(str_remove(basename(all_files), ".xls"))
 
 # how many do we have?
-length(all_files) # 346
+length(all_files) # 358
 
 # most have the individual points labelled like
 # pt-000 or pt00 or p000
@@ -113,13 +113,8 @@ list.files("data/renamed-files/",
            full.names = TRUE)
 
 all_files_xls <- 
-<<<<<<< HEAD
   map(all_renamed_files, ~read_excel(.x, skip = 7)) 
 # View(all_files_xls)
-
-# drop empty or malformed data tables, check for presence of 'series' column
-=======
-  map(all_files_rennamed, ~read_excel(.x, skip = 7)) 
 
 names(all_files_xls) <- tolower(str_remove(basename(all_files_rennamed), ".xls"))
 
@@ -128,31 +123,22 @@ names(all_files_xls) <- tolower(str_remove(basename(all_files_rennamed), ".xls")
 # this indicates that summary table that 
 # we want. Some files have counts, this
 # is too raw for us. 
->>>>>>> ab381787716256e01f19d253a9b74b847e573751
 
-names(all_files_xls)
-
-# identify tables that have the element weights, they have a column
-# called "series" we want that. 
-# (don't want the spectra files, which lack the 'series' column)
 all_files_xls_format_ok_idx <- 
   map_lgl(all_files_xls, 
           ~ifelse("series" %in% names(.x), TRUE, FALSE))
 
-<<<<<<< HEAD
 # what are those samples that lack the table of data
 all_renamed_files[!all_files_xls_format_ok_idx]
 
-# drop bad tables
-=======
 # drop data frames that are not the summary tables
 # that we want
->>>>>>> ab381787716256e01f19d253a9b74b847e573751
+
 all_files_xls_format_ok <- 
   all_files_xls[all_files_xls_format_ok_idx]
 
 # how many points does this leave us?
-length(all_files_xls_format_ok) # 201
+length(all_files_xls_format_ok) # 201 -> 213
 
 # select only the element and wt cols
 all_files_xls_format_ok_wt <- 
@@ -166,12 +152,7 @@ names(all_files_xls_format_ok_wt) %>%
   str_remove_all(., "-rt|-table|-p.{3,5}") %>% 
   unique() %>% 
   enframe() %>% 
-<<<<<<< HEAD
-  arrange(value) # 17 rows -> 35 rows
-
-=======
-  arrange(value) # 19 rows
->>>>>>> ab381787716256e01f19d253a9b74b847e573751
+  arrange(value) # 17 rows -> 35 rows -> 19 rows
 
 # convert from list of tables into one data frame
 all_files_wt_df <- 
@@ -209,7 +190,7 @@ all_files_wt_df_matrix_blocks <-
 all_files_wt_df_matrix %>% 
   mutate(sample = str_remove(sample, "-pt.*")) %>% 
   group_by(sample) %>% 
-  tally() # 16 -> 11 -> 9 -> 12
+  tally() # 16 -> 11 -> 9 -> 12 -> 17
 
 all_files_wt_df_matrix_blocks
 
@@ -283,6 +264,7 @@ all_files_wt_df_matrix_wide_norm_subset <-
                     c(
                     # we need to manually add the block ID
                     # here to make it show up on the plot
+                    # look at all_files_wt_df_matrix_blocks
                     "mm-05-9ya-013",
                     "mm-06-9ya-014",
                     "mm-07-9ya-015",
@@ -291,6 +273,10 @@ all_files_wt_df_matrix_wide_norm_subset <-
                     "mm-09-5wt-002",
                     "mm-10-5wt-003",
                     "mm-17-6dg-004",
+                    "mm-18-6dg-005",
+                    "mm-19-6dg-006",
+                    "mm-25-6dg-007",
+                    "mm-21-5wt-005",
                     "mm-22-5wt-006",
                     "tm-02-00-9ya-001",
                     "tm-01-01-9ya-003",
