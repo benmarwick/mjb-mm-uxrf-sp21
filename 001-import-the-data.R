@@ -1,6 +1,6 @@
 
 
-library(tidyverse)
+library(tidyverse) # you may need to install.packages("tidyverse") in the console
 library(readxl)
 library(vegetarian) # https://github.com/cran/vegetarian, not on CRAN
 # to install remotes::install_github("cran/vegetarian")
@@ -8,7 +8,8 @@ library(easyCODA)
 library(googlesheets4)
 
 # change to your own UW email
-gs4_auth("bmarwick@uw.edu")
+gs4_auth("bmarwick@uw.edu") # opens a browser window, you need to check the box and 
+# click "ok" and wait for the message that says 'close this window'
 
 # Get our google sheet of information about the location of each point
 block_sample_point_details <- 
@@ -21,7 +22,7 @@ block_sample_locations <-
 
 # to get or update the data files:
 # 1. Go to https://drive.google.com/drive/u/1/folders/1KaYNY0ybUQbUAwgcCd1G-A9FXe4-uiA6
-# 2. Download to your computer this folder: Data files from XRF instrument
+# 2. Download to your computer this folder: "Data files from XRF instrument"
 # 3. Unzip and place the unzipped folder in a folder named 'data' 
 # in the same directory as this file
 
@@ -36,7 +37,11 @@ all_files <- list.files(path = here::here("data"),
 names(all_files) <- tolower(str_remove(basename(all_files), ".xls"))
 
 # how many do we have?
+<<<<<<< HEAD
 length(all_files) # 385
+=======
+length(all_files) # 358
+>>>>>>> 5deb6483742a300f507c615dc4d6850f59c56711
 
 # most have the individual points labelled like
 # pt-000 or pt00 or p000
@@ -91,9 +96,16 @@ checking <- tibble(block_ids,
                    pt_nums) %>% 
   mutate(new_file_name = paste0(block_ids, "-", pt_nums, ".xls"))
   
+# delete this later
 dir.create("data/renamed-files/")
+
 file.rename(all_files, 
-            paste0("data/renamed-files/", checking$new_file_name))
+            paste0("data/renamed-files/", 
+                   checking$new_file_name))
+
+all_renamed_files <- 
+  list.files("data/renamed-files/",
+             full.names = TRUE)
 
 # delete everything in the "Data files from XRF instrument"
 # folder to avoid confusion
@@ -105,7 +117,8 @@ list.files("data/renamed-files/",
            full.names = TRUE)
 
 all_files_xls <- 
-  map(all_files_rennamed, ~read_excel(.x, skip = 7)) 
+  map(all_renamed_files, ~read_excel(.x, skip = 7)) 
+# View(all_files_xls)
 
 names(all_files_xls) <- tolower(str_remove(basename(all_files_rennamed), ".xls"))
 
@@ -115,18 +128,25 @@ names(all_files_xls) <- tolower(str_remove(basename(all_files_rennamed), ".xls")
 # we want. Some files have counts, this
 # is too raw for us. 
 
-# identify bad tables
 all_files_xls_format_ok_idx <- 
   map_lgl(all_files_xls, 
           ~ifelse("series" %in% names(.x), TRUE, FALSE))
 
+# what are those samples that lack the table of data
+all_renamed_files[!all_files_xls_format_ok_idx]
+
 # drop data frames that are not the summary tables
 # that we want
+
 all_files_xls_format_ok <- 
   all_files_xls[all_files_xls_format_ok_idx]
 
 # how many points does this leave us?
+<<<<<<< HEAD
 length(all_files_xls_format_ok) # 279
+=======
+length(all_files_xls_format_ok) # 201 -> 213
+>>>>>>> 5deb6483742a300f507c615dc4d6850f59c56711
 
 # select only the element and wt cols
 all_files_xls_format_ok_wt <- 
@@ -140,7 +160,11 @@ names(all_files_xls_format_ok_wt) %>%
   str_remove_all(., "-rt|-table|-p.{3,5}") %>% 
   unique() %>% 
   enframe() %>% 
+<<<<<<< HEAD
   arrange(value) # 24 rows
+=======
+  arrange(value) # 17 rows -> 35 rows -> 19 rows
+>>>>>>> 5deb6483742a300f507c615dc4d6850f59c56711
 
 # convert from list of tables into one data frame
 all_files_wt_df <- 
@@ -178,7 +202,11 @@ all_files_wt_df_matrix_blocks <-
 all_files_wt_df_matrix %>% 
   mutate(sample = str_remove(sample, "-pt.*")) %>% 
   group_by(sample) %>% 
+<<<<<<< HEAD
   tally() # 16 -> 11 -> 9 -> 12 -> 20
+=======
+  tally() # 16 -> 11 -> 9 -> 12 -> 17
+>>>>>>> 5deb6483742a300f507c615dc4d6850f59c56711
 
 all_files_wt_df_matrix_blocks
 
@@ -234,8 +262,12 @@ all_files_wt_df_matrix_wide <-
   dplyr::select(all_of(our_elements))
 
 # normalise the measurements so all elements sum to 100 in each sample
-all_files_wt_df_matrix_wide_norm <- data.frame(normalize.rows(all_files_wt_df_matrix_wide) * 100)
-names(all_files_wt_df_matrix_wide_norm) <- names(all_files_wt_df_matrix_wide)
+all_files_wt_df_matrix_wide_norm <- 
+  data.frame(normalize.rows(all_files_wt_df_matrix_wide) * 100)
+
+names(all_files_wt_df_matrix_wide_norm) <- 
+  names(all_files_wt_df_matrix_wide)
+
 rownames(all_files_wt_df_matrix_wide_norm) <- 
   str_remove(unique(all_files_wt_df_matrix$sample), "mjb15-")
 
@@ -248,6 +280,7 @@ all_files_wt_df_matrix_wide_norm_subset <-
                     c(
                     # we need to manually add the block ID
                     # here to make it show up on the plot
+<<<<<<< HEAD
                       
                       # These are samples from the SW section
                       # in order of depth
@@ -268,16 +301,43 @@ all_files_wt_df_matrix_wide_norm_subset <-
                       "tm-01-03-9ya-005", #  no
                       "tm-01-04-9ya-006", #  no
                       "tm-01-05-9ya-007"  #  yes
+=======
+                    # look at all_files_wt_df_matrix_blocks
+                    "mm-05-9ya-013",
+                    "mm-06-9ya-014",
+                    "mm-07-9ya-015",
+                    "mm-08-5wt-001",
+                    "mm-08-9ya-016",
+                    "mm-09-5wt-002",
+                    "mm-10-5wt-003",
+                    "mm-17-6dg-004",
+                    "mm-18-6dg-005",
+                    "mm-19-6dg-006",
+                    "mm-25-6dg-007",
+                    "mm-21-5wt-005",
+                    "mm-22-5wt-006",
+                    "tm-02-00-9ya-001",
+                    "tm-01-01-9ya-003",
+                    "tm-01-05-9ya-007"
+>>>>>>> 5deb6483742a300f507c615dc4d6850f59c56711
                     ),
                     collapse = "|")) 
    ) %>% 
    filter(!rownames(.) %in% c(
     # filter out highly outlying points
+<<<<<<< HEAD
      "tm-02-00-9ya-001-pt-002"
                                ))
 
 
 
+=======
+    "tm-02-00-9ya-001-pt-004-pt-004.xls",
+    "tm-02-00-9ya-001-pt-003-pt-003.xls",
+    "mm-18-6dg-005-pt-001",
+    "mm-18-6dg-005-pt-002"
+                              ))
+>>>>>>> 5deb6483742a300f507c615dc4d6850f59c56711
 
 
 
