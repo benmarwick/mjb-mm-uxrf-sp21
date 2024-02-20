@@ -95,12 +95,14 @@ function (obj,
               size = 2,
               colour = "black",
               bg.colour = "white") +
+    # this shows the individual point lables
+    # set size = 0 to hide these labels
     geom_shadowtext(data = point_labels,
                     aes( X1 , 
                          X2, 
                         label = label,
                         colour = str_detect(obj$rownames, "mm")),
-                    size = 0,
+                    size = 0,  # set size = 0 to hide these labels
                     bg.colour = "white") +
     scale_color_manual(values = scales::hue_pal()(2),
                        labels = legend_labels) +

@@ -36,7 +36,7 @@ all_files <- list.files(path = here::here("data"),
 names(all_files) <- tolower(str_remove(basename(all_files), ".xls"))
 
 # how many do we have?
-length(all_files) # 346
+length(all_files) # 385
 
 # most have the individual points labelled like
 # pt-000 or pt00 or p000
@@ -126,7 +126,7 @@ all_files_xls_format_ok <-
   all_files_xls[all_files_xls_format_ok_idx]
 
 # how many points does this leave us?
-length(all_files_xls_format_ok) # 201
+length(all_files_xls_format_ok) # 279
 
 # select only the element and wt cols
 all_files_xls_format_ok_wt <- 
@@ -140,7 +140,7 @@ names(all_files_xls_format_ok_wt) %>%
   str_remove_all(., "-rt|-table|-p.{3,5}") %>% 
   unique() %>% 
   enframe() %>% 
-  arrange(value) # 19 rows
+  arrange(value) # 24 rows
 
 # convert from list of tables into one data frame
 all_files_wt_df <- 
@@ -178,7 +178,7 @@ all_files_wt_df_matrix_blocks <-
 all_files_wt_df_matrix %>% 
   mutate(sample = str_remove(sample, "-pt.*")) %>% 
   group_by(sample) %>% 
-  tally() # 16 -> 11 -> 9 -> 12
+  tally() # 16 -> 11 -> 9 -> 12 -> 20
 
 all_files_wt_df_matrix_blocks
 
@@ -187,40 +187,40 @@ all_files_wt_df_matrix_blocks
 our_elements <- c(
   # our set of elements, many are highly correlated, so
   # we comment-out elements to exclude them from the LRA
-  #"Aluminium"  ,  
-  "Arsenic"  ,  
+  "Aluminium"  ,  
+  #"Arsenic"  ,  
   "Barium"   , 
-  "Bromine"  ,  
+ # "Bromine"  ,  
   "Calcium"  , 
-  "Chromium",  
-  "Cobalt"    , 
-  "Copper"    , 
-  "Gallium"   , 
-  "Germanium" , 
-  "Iridium"   , 
+ # "Chromium",  
+ # "Cobalt"    , 
+ # "Copper"    , 
+ # "Gallium"   , 
+ # "Germanium" , 
+ # "Iridium"   , 
   "Iron",      
   "Magnesium",  
   "Manganese" , 
-  "Nickel"    , 
-  "Palladium" , 
-  #"Phosphorus",
-  "Platinum" ,  
+ # "Nickel"    , 
+ # "Palladium" , 
+  "Phosphorus",
+ # "Platinum" ,  
   "Potassium" , 
-  "Rhodium"   , 
-  "Rubidium"  , 
-  "Scandium",  
-  "Selenium" , 
-  "Silicon"   , 
-  "Silver"    ,  # very correlated 
-  "Strontium" ,  # very correlated 
-  #"Sulfur"    ,  # very correlated 
+ # "Rhodium"   , 
+ # "Rubidium"  , 
+ # "Scandium",  
+ # "Selenium" , 
+ # "Silicon"   , 
+ # "Silver"    ,  # very correlated 
+ # "Strontium" ,  # very correlated 
+  "Sulfur"    ,  # very correlated 
   "Tin",       
-  "Titanium" ,  
-  "Tungsten"  , 
-  "Vanadium"  , 
-  "Yttrium"   , 
-  "Zinc"      , 
-  "Zirconium"
+ # "Titanium" ,  
+ # "Tungsten"  , 
+ # "Vanadium"  , 
+  "Yttrium"    
+  #"Zinc"      , 
+ # "Zirconium"
  )
 
 # select only a sub-set of elements
@@ -231,7 +231,7 @@ all_files_wt_df_matrix_wide <-
   replace(is.na(.), 0)  %>% 
   replace(. == 0, 0.0001) %>% 
   dplyr::select(-sample) %>% 
-  dplyr::select(our_elements)
+  dplyr::select(all_of(our_elements))
 
 # normalise the measurements so all elements sum to 100 in each sample
 all_files_wt_df_matrix_wide_norm <- data.frame(normalize.rows(all_files_wt_df_matrix_wide) * 100)
@@ -248,26 +248,36 @@ all_files_wt_df_matrix_wide_norm_subset <-
                     c(
                     # we need to manually add the block ID
                     # here to make it show up on the plot
-                    "mm-05-9ya-013",
-                    "mm-06-9ya-014",
-                    "mm-07-9ya-015",
-                    "mm-08-5wt-001",
-                    "mm-08-9ya-016",
-                    "mm-09-5wt-002",
-                    "mm-10-5wt-003",
-                    "mm-17-6dg-004",
-                    "mm-22-5wt-006",
-                    "tm-02-00-9ya-001",
-                    "tm-01-01-9ya-003",
-                    "tm-01-05-9ya-007"
+                      
+                      # These are samples from the SW section
+                      # in order of depth
+                      "mm-08-5wt-001",
+                      "mm-09-5wt-002",
+                      "mm-10-5wt-003",
+                      "mm-15-6dg-002",
+                      "mm-16-6dg-003",
+                      "mm-17-6dg-004",
+                      "mm-18-6dg-005",
+                      "mm-19-6dg-006",
+                      "mm-14-5wt-004",
+                      
+                      # Here are our termite samples
+                      "tm-02-00-9ya-001", #  yes
+                      "tm-01-01-9ya-003", #  yes
+                      "tm-01-02-9ya-004", #  no - analysis still underway?
+                      "tm-01-03-9ya-005", #  no
+                      "tm-01-04-9ya-006", #  no
+                      "tm-01-05-9ya-007"  #  yes
                     ),
-                    collapse = "|"))
-  ) %>% 
-  filter(!rownames(.) %in% c(
+                    collapse = "|")) 
+   ) %>% 
+   filter(!rownames(.) %in% c(
     # filter out highly outlying points
-    "tm-02-00-9ya-001-pt-004-pt-004.xls",
-    "tm-02-00-9ya-001-pt-003-pt-003.xls"
-                              ))
+     "tm-02-00-9ya-001-pt-002"
+                               ))
+
+
+
 
 
 
