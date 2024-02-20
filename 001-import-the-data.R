@@ -277,6 +277,14 @@ all_files_wt_df_matrix_wide_norm_subset <-
                        "mm-18-6dg-005",
                        "mm-19-6dg-006",
                        "mm-14-5wt-004",
+                       
+                       # There are samples from the NE section,
+                       # in order of depth
+                       "mm-21-5wt-005",
+                       "mm-22-5wt-006",
+                       "mm-23-5wt-007",
+                       "mm-24-5wt-008",
+                       "mm-25-6dg-007",
                       
                       # Here are our termite samples
                       "tm-02-00-9ya-001", #  yes
@@ -296,9 +304,5 @@ all_files_wt_df_matrix_wide_norm_subset <-
      "tm-01-01-9ya-003-pt-010-pt-010.xls"
      
                                ))
-
-
-
-
 
 
