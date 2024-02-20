@@ -102,11 +102,7 @@ function (obj,
                          X2, 
                         label = label,
                         colour = str_detect(obj$rownames, "mm")),
-<<<<<<< HEAD
                     size = 0,  # set size = 0 to hide these labels
-=======
-                    size = 0, # set to 0 to hide these
->>>>>>> 5deb6483742a300f507c615dc4d6850f59c56711
                     bg.colour = "white") +
     scale_color_manual(values = scales::hue_pal()(2),
                        labels = legend_labels) +

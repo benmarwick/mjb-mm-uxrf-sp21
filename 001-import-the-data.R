@@ -37,11 +37,8 @@ all_files <- list.files(path = here::here("data"),
 names(all_files) <- tolower(str_remove(basename(all_files), ".xls"))
 
 # how many do we have?
-<<<<<<< HEAD
 length(all_files) # 385
-=======
-length(all_files) # 358
->>>>>>> 5deb6483742a300f507c615dc4d6850f59c56711
+
 
 # most have the individual points labelled like
 # pt-000 or pt00 or p000
@@ -142,11 +139,7 @@ all_files_xls_format_ok <-
   all_files_xls[all_files_xls_format_ok_idx]
 
 # how many points does this leave us?
-<<<<<<< HEAD
 length(all_files_xls_format_ok) # 279
-=======
-length(all_files_xls_format_ok) # 201 -> 213
->>>>>>> 5deb6483742a300f507c615dc4d6850f59c56711
 
 # select only the element and wt cols
 all_files_xls_format_ok_wt <- 
@@ -160,11 +153,8 @@ names(all_files_xls_format_ok_wt) %>%
   str_remove_all(., "-rt|-table|-p.{3,5}") %>% 
   unique() %>% 
   enframe() %>% 
-<<<<<<< HEAD
   arrange(value) # 24 rows
-=======
-  arrange(value) # 17 rows -> 35 rows -> 19 rows
->>>>>>> 5deb6483742a300f507c615dc4d6850f59c56711
+
 
 # convert from list of tables into one data frame
 all_files_wt_df <- 
@@ -202,11 +192,7 @@ all_files_wt_df_matrix_blocks <-
 all_files_wt_df_matrix %>% 
   mutate(sample = str_remove(sample, "-pt.*")) %>% 
   group_by(sample) %>% 
-<<<<<<< HEAD
   tally() # 16 -> 11 -> 9 -> 12 -> 20
-=======
-  tally() # 16 -> 11 -> 9 -> 12 -> 17
->>>>>>> 5deb6483742a300f507c615dc4d6850f59c56711
 
 all_files_wt_df_matrix_blocks
 
@@ -280,7 +266,6 @@ all_files_wt_df_matrix_wide_norm_subset <-
                     c(
                     # we need to manually add the block ID
                     # here to make it show up on the plot
-<<<<<<< HEAD
                       
                       # These are samples from the SW section
                       # in order of depth
@@ -301,43 +286,17 @@ all_files_wt_df_matrix_wide_norm_subset <-
                       "tm-01-03-9ya-005", #  no
                       "tm-01-04-9ya-006", #  no
                       "tm-01-05-9ya-007"  #  yes
-=======
-                    # look at all_files_wt_df_matrix_blocks
-                    "mm-05-9ya-013",
-                    "mm-06-9ya-014",
-                    "mm-07-9ya-015",
-                    "mm-08-5wt-001",
-                    "mm-08-9ya-016",
-                    "mm-09-5wt-002",
-                    "mm-10-5wt-003",
-                    "mm-17-6dg-004",
-                    "mm-18-6dg-005",
-                    "mm-19-6dg-006",
-                    "mm-25-6dg-007",
-                    "mm-21-5wt-005",
-                    "mm-22-5wt-006",
-                    "tm-02-00-9ya-001",
-                    "tm-01-01-9ya-003",
-                    "tm-01-05-9ya-007"
->>>>>>> 5deb6483742a300f507c615dc4d6850f59c56711
+
                     ),
                     collapse = "|")) 
    ) %>% 
    filter(!rownames(.) %in% c(
     # filter out highly outlying points
-<<<<<<< HEAD
      "tm-02-00-9ya-001-pt-002"
                                ))
 
 
 
-=======
-    "tm-02-00-9ya-001-pt-004-pt-004.xls",
-    "tm-02-00-9ya-001-pt-003-pt-003.xls",
-    "mm-18-6dg-005-pt-001",
-    "mm-18-6dg-005-pt-002"
-                              ))
->>>>>>> 5deb6483742a300f507c615dc4d6850f59c56711
 
 
 
