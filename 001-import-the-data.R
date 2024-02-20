@@ -39,7 +39,6 @@ names(all_files) <- tolower(str_remove(basename(all_files), ".xls"))
 # how many do we have?
 length(all_files) # 385
 
-
 # most have the individual points labelled like
 # pt-000 or pt00 or p000
 # so we can take the filename and paste the point number on
@@ -196,14 +195,14 @@ all_files_wt_df_matrix %>%
 
 all_files_wt_df_matrix_blocks
 
-# our set of elements
+# our set of elements, based on notes from Lillian's readings
 
 our_elements <- c(
   # our set of elements, many are highly correlated, so
   # we comment-out elements to exclude them from the LRA
   "Aluminium"  ,  
   #"Arsenic"  ,  
-  "Barium"   , 
+ # "Barium"   , 
  # "Bromine"  ,  
   "Calcium"  , 
  # "Chromium",  
@@ -227,8 +226,8 @@ our_elements <- c(
  # "Silicon"   , 
  # "Silver"    ,  # very correlated 
  # "Strontium" ,  # very correlated 
-  "Sulfur"    ,  # very correlated 
-  "Tin",       
+ # "Sulfur"    ,  # very correlated 
+ # "Tin",       
  # "Titanium" ,  
  # "Tungsten"  , 
  # "Vanadium"  , 
@@ -269,15 +268,15 @@ all_files_wt_df_matrix_wide_norm_subset <-
                       
                       # These are samples from the SW section
                       # in order of depth
-                      "mm-08-5wt-001",
-                      "mm-09-5wt-002",
-                      "mm-10-5wt-003",
-                      "mm-15-6dg-002",
-                      "mm-16-6dg-003",
-                      "mm-17-6dg-004",
-                      "mm-18-6dg-005",
-                      "mm-19-6dg-006",
-                      "mm-14-5wt-004",
+                       "mm-08-5wt-001",
+                       "mm-09-5wt-002",
+                       "mm-10-5wt-003",
+                       "mm-15-6dg-002",
+                       "mm-16-6dg-003",
+                       "mm-17-6dg-004",
+                       "mm-18-6dg-005",
+                       "mm-19-6dg-006",
+                       "mm-14-5wt-004",
                       
                       # Here are our termite samples
                       "tm-02-00-9ya-001", #  yes
@@ -292,7 +291,10 @@ all_files_wt_df_matrix_wide_norm_subset <-
    ) %>% 
    filter(!rownames(.) %in% c(
     # filter out highly outlying points
-     "tm-02-00-9ya-001-pt-002"
+     "tm-02-00-9ya-001-pt-002-pt-002.xls",
+     "tm-01-03-9ya-005-pt-006-pt-006.xls",
+     "tm-01-01-9ya-003-pt-010-pt-010.xls"
+     
                                ))
 
 

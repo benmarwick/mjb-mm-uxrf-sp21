@@ -110,7 +110,7 @@ function (obj,
                        labels = legend_labels) +
     guides(colour = guide_legend(title = legend_title),
            shape = guide_legend(title = legend_title)) +
-    theme(legend.position = c(.8,.85))
+    theme(legend.position = c(.3,.15))
   
 }
 
