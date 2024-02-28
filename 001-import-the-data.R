@@ -289,9 +289,9 @@ all_files_wt_df_matrix_wide_norm_subset <-
                       # Here are our termite samples
                       "tm-02-00-9ya-001", #  yes
                       "tm-01-01-9ya-003", #  yes
-                      "tm-01-02-9ya-004", #  no - analysis still underway?
-                      "tm-01-03-9ya-005", #  no
-                      "tm-01-04-9ya-006", #  no
+                      "tm-01-02-9ya-004", #  no - sample lost?
+                      "tm-01-03-9ya-005", #  no - have data
+                      "tm-01-04-9ya-006", #  no - have data
                       "tm-01-05-9ya-007"  #  yes
 
                     ),
