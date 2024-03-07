@@ -424,7 +424,24 @@ lda(group ~ . ,
     data = all_files_wt_df_matrix_wide_norm_group)
 
 
+#------------------------------------------------
 
+# these are the coords of the points on our LRA
+x <- 
+data.frame(
+all_files_wt_df_matrix_wide_norm_lra$rowcoord[, 1:2])
+
+x$sample_id <-  all_files_wt_df_matrix_wide_norm_lra$rownames
+
+
+x %>% 
+  # experimient with values in her to zoom in to the plot
+  # around Ca
+  filter(between(X2, 0, 1)) %>% 
+  filter(between(X1, -0.5, -1.5))
+
+all_files_wt_df_matrix_wide_norm_subset %>% 
+  arrange(desc(Calcium))
 
 
 
